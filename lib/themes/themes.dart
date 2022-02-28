@@ -18,6 +18,7 @@ Color titleBlackColor = Colors.black;
 Color buttonGrayColor = Color(0xffaaa9b1);
 Color grayColor = Color(0xff9c9c9c);
 Color genreColor = Color(0xff88A4E8);
+Color subTitleColor = Color(0xff110E47);
 
 // icon and logo color
 Color starColor = Color(0xffFFC319);
@@ -26,6 +27,8 @@ Color idleColor = Color(0XFFBCBCCD);
 // background color
 Color buttonGrayBgColor = Color(0xffe5e4ea);
 Color genreBgColor = Color(0xffDBE3FF);
+Color bannerShaderBgColor = Color(0xff110E47);
+Color transparentBgColor = Colors.transparent;
 
 // style text
 TextStyle splashScreenTextStyle = GoogleFonts.roboto(
@@ -60,6 +63,12 @@ TextStyle ratingTextStyle = GoogleFonts.roboto(
 
 TextStyle timeTextStyle = GoogleFonts.roboto(
   color: Colors.black,
+  fontSize: 12,
+  fontWeight: reguler,
+);
+
+TextStyle subTextStyle = GoogleFonts.roboto(
+  color: grayColor,
   fontSize: 12,
   fontWeight: reguler,
 );

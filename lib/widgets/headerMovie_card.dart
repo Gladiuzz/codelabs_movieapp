@@ -1,3 +1,4 @@
+import 'package:codelabs_movieapp/pages/movie_page.dart';
 import 'package:codelabs_movieapp/themes/themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,14 @@ class HeaderMovieCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MoviePage(),
+          ),
+        );
+      },
       child: Container(
         width: 139,
         child: Column(
