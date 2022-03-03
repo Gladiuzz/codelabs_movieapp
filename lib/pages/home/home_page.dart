@@ -1,13 +1,32 @@
+import 'package:codelabs_movieapp/cubit/moviePopular_cubit.dart';
+import 'package:codelabs_movieapp/cubit/movienewplaying_cubit.dart';
 import 'package:codelabs_movieapp/providers/page_provider.dart';
 import 'package:codelabs_movieapp/themes/themes.dart';
 import 'package:codelabs_movieapp/widgets/headerMovie_card.dart';
 import 'package:codelabs_movieapp/widgets/movie_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  var playing, popular;
+
+  @override
+  void initState() {
+    super.initState();
+    popular = context.read<MoviePopularCubit>();
+    playing = context.read<MovienewplayingCubit>();
+    popular.fetchMoviePopular();
+    playing.fetchMoviePlaying();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,18 +117,29 @@ class HomePage extends StatelessWidget {
     Widget popularMovie() {
       return Container(
         height: 279,
-        child: ListView.builder(
-          itemCount: 6,
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            return Container(
-              margin: EdgeInsets.only(left: 20, right: 5),
-              child: Row(
-                children: [
-                  HeaderMovieCard(),
-                ],
-              ),
+        child: BlocBuilder<MoviePopularCubit, MoviePopularState>(
+          builder: (context, state) {
+            if (state is MoviePopularLoading) {
+              return CircularProgressIndicator();
+            } else if (state is MoviePopularSuccess) {
+              return ListView.builder(
+                itemCount: 4,
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: EdgeInsets.only(left: 20, right: 5),
+                    child: Row(
+                      children: [
+                        HeaderMovieCard(state.movie[index]),
+                      ],
+                    ),
+                  );
+                },
+              );
+            }
+            return Center(
+              child: Text('Popular List'),
             );
           },
         ),
@@ -156,13 +186,24 @@ class HomePage extends StatelessWidget {
 
     Widget newMovie() {
       return Container(
-        child: ListView.builder(
-          itemCount: 4,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return Container(
-              child: MovieCard(),
+        child: BlocBuilder<MovienewplayingCubit, MovienewplayingState>(
+          builder: (context, state) {
+            if (state is MovienewplayingLoading) {
+              return CircularProgressIndicator();
+            } else if (state is MovienewplayingSuccess) {
+              return ListView.builder(
+                itemCount: 10,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Container(
+                    child: MovieCard(state.movie[index]),
+                  );
+                },
+              );
+            }
+            return Center(
+              child: Text('Popular List'),
             );
           },
         ),

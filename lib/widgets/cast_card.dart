@@ -1,14 +1,18 @@
+import 'package:codelabs_movieapp/models/cast_model.dart';
 import 'package:codelabs_movieapp/themes/themes.dart';
 import 'package:flutter/cupertino.dart';
 
 class CastCard extends StatelessWidget {
-  const CastCard({Key? key}) : super(key: key);
+  final CastModel castModel;
+
+  const CastCard(this.castModel, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
         left: 20,
+        right: 20,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -18,9 +22,9 @@ class CastCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(6.0),
             child: Container(
               width: 104,
-              height: 72,
-              child: Image.asset(
-                'assets/tom_holland.jpeg',
+              height: 92,
+              child: Image.network(
+                'https://image.tmdb.org/t/p/w500/${castModel.profilePath}',
                 fit: BoxFit.cover,
               ),
             ),
@@ -33,7 +37,7 @@ class CastCard extends StatelessWidget {
             child: RichText(
               overflow: TextOverflow.visible,
               text: TextSpan(
-                text: "Tom Holland",
+                text: "${castModel.name}",
                 style: subTextStyle.copyWith(
                   fontWeight: semiBold,
                   color: titleBlackColor,
@@ -41,6 +45,21 @@ class CastCard extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(height: 10),
+          Container(
+            width: 80,
+            child: RichText(
+              overflow: TextOverflow.visible,
+              text: TextSpan(
+                text: "${castModel.character}",
+                style: subTextStyle.copyWith(
+                  fontWeight: reguler,
+                  color: titleBlackColor,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

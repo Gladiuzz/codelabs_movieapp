@@ -1,3 +1,4 @@
+import 'package:codelabs_movieapp/models/movie_model.dart';
 import 'package:codelabs_movieapp/pages/movie_page.dart';
 import 'package:codelabs_movieapp/themes/themes.dart';
 import 'package:codelabs_movieapp/widgets/genre_card.dart';
@@ -5,7 +6,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MovieCard extends StatelessWidget {
-  const MovieCard({Key? key}) : super(key: key);
+  final MovieModel movie;
+  const MovieCard(this.movie, {Key? key}) : super(key: key);
+
+  String getTimeString(int value) {
+    final int hour = value ~/ 60;
+    final int minutes = value % 60;
+    return '${hour.toString().padLeft(2, "")}h ${minutes.toString().padLeft(2, "")}m';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +23,7 @@ class MovieCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MoviePage(),
+            builder: (context) => MoviePage(movie),
           ),
         );
       },
@@ -27,8 +35,8 @@ class MovieCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(6.0),
               child: Container(
-                child: Image.asset(
-                  'assets/example_img.jpg',
+                child: Image.network(
+                  'https://image.tmdb.org/t/p/w500/${movie.posterPath}',
                   width: 85,
                   height: 120,
                   fit: BoxFit.cover,
@@ -43,7 +51,8 @@ class MovieCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "Spiderman: No Way Home",
+                  "${movie.title}",
+                  maxLines: 15,
                   style: titleTextStyle.copyWith(
                     fontSize: 14,
                   ),
@@ -62,7 +71,7 @@ class MovieCard extends StatelessWidget {
                       width: 4,
                     ),
                     Text(
-                      "9.1/10 IMDb",
+                      "${movie.voteAverage}/10 IMDb",
                       style: ratingTextStyle,
                     ),
                   ],
@@ -73,11 +82,11 @@ class MovieCard extends StatelessWidget {
                 Container(
                   height: 20,
                   child: ListView.builder(
-                    itemCount: 3,
+                    itemCount: movie.genres?.length,
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
-                      return GenreCard();
+                      return GenreCard(movie.genres![index]);
                     },
                   ),
                 ),
@@ -95,7 +104,7 @@ class MovieCard extends StatelessWidget {
                       width: 4,
                     ),
                     Text(
-                      "1h 47m",
+                      getTimeString(movie.runtime),
                       style: ratingTextStyle.copyWith(),
                     ),
                   ],

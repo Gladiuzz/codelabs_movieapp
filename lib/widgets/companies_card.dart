@@ -1,15 +1,17 @@
+import 'package:codelabs_movieapp/models/production_model.dart';
 import 'package:codelabs_movieapp/themes/themes.dart';
 import 'package:flutter/cupertino.dart';
 
-class VideoCard extends StatelessWidget {
-  const VideoCard({Key? key}) : super(key: key);
+class CompaniesCard extends StatelessWidget {
+  final ProductionCompaniesModel productionCompaniesModel;
+
+  const CompaniesCard(this.productionCompaniesModel, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(
-        left: 20,
-      ),
+      margin: EdgeInsets.only(left: 20, right: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -19,9 +21,9 @@ class VideoCard extends StatelessWidget {
             child: Container(
               width: 104,
               height: 72,
-              child: Image.asset(
-                'assets/tom_holland.jpeg',
-                fit: BoxFit.cover,
+              child: Image.network(
+                'https://image.tmdb.org/t/p/w500/${productionCompaniesModel.logoPath}',
+                fit: BoxFit.scaleDown,
               ),
             ),
           ),
@@ -33,7 +35,7 @@ class VideoCard extends StatelessWidget {
             child: RichText(
               overflow: TextOverflow.visible,
               text: TextSpan(
-                text: "Tom Holland",
+                text: "${productionCompaniesModel.name}",
                 style: subTextStyle.copyWith(
                   fontWeight: semiBold,
                   color: titleBlackColor,

@@ -1,3 +1,4 @@
+import 'package:codelabs_movieapp/models/movie_model.dart';
 import 'package:codelabs_movieapp/pages/movie_page.dart';
 import 'package:codelabs_movieapp/services/movie_service.dart';
 import 'package:codelabs_movieapp/themes/themes.dart';
@@ -5,29 +6,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HeaderMovieCard extends StatelessWidget {
-  const HeaderMovieCard({Key? key}) : super(key: key);
+  final MovieModel movie;
+  const HeaderMovieCard(this.movie, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print(MovieService().getMoviePlaying().toString());
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => MoviePage(),
-        //   ),
-        // );
+        // print(movie);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MoviePage(movie),
+          ),
+        );
       },
       child: Container(
         width: 139,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(6.0),
               child: Container(
-                child: Image.asset(
-                  'assets/example_img.jpg',
+                child: Image.network(
+                  'https://image.tmdb.org/t/p/w500/${movie.posterPath}',
                   width: 143,
                   height: 212,
                   fit: BoxFit.cover,
@@ -38,7 +41,7 @@ class HeaderMovieCard extends StatelessWidget {
               height: 12,
             ),
             Text(
-              "Spiderman: No Way Home",
+              "${movie.title}",
               style: titleTextStyle.copyWith(
                 fontSize: 14,
               ),
@@ -57,7 +60,7 @@ class HeaderMovieCard extends StatelessWidget {
                   width: 4,
                 ),
                 Text(
-                  "9.1/10 IMDb",
+                  "${movie.voteAverage}/10 IMDb",
                   style: ratingTextStyle,
                 ),
               ],

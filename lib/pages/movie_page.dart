@@ -1,56 +1,46 @@
+import 'package:codelabs_movieapp/cubit/cast_cubit.dart';
+import 'package:codelabs_movieapp/models/movie_model.dart';
 import 'package:codelabs_movieapp/themes/themes.dart';
 import 'package:codelabs_movieapp/widgets/cast_card.dart';
 import 'package:codelabs_movieapp/widgets/genre_card.dart';
-import 'package:codelabs_movieapp/widgets/video_card.dart';
+import 'package:codelabs_movieapp/widgets/companies_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MoviePage extends StatefulWidget {
-  MoviePage({Key? key}) : super(key: key);
+  final MovieModel movieModel;
+
+  MoviePage(this.movieModel, {Key? key}) : super(key: key);
 
   @override
   State<MoviePage> createState() => _MoviePageState();
 }
 
 class _MoviePageState extends State<MoviePage> {
-  ScrollController? _scrollController;
   bool lastStatus = true;
-  double height = 100;
-  late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
-
-  void _scrollListener() {
-    if (_isShrink != lastStatus) {
-      setState(() {
-        lastStatus = _isShrink;
-      });
-    }
-  }
-
-  bool get _isShrink {
-    return _scrollController!.hasClients &&
-        _scrollController!.offset > (height - kToolbarHeight);
-  }
+  double height = 25;
+  var cast;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset(
-      'assets/trailer_test.mp4',
-    );
-
-    _initializeVideoPlayerFuture = _controller.initialize();
-
-    _scrollController = ScrollController()..addListener(_scrollListener);
+    cast = context.read<CastCubit>();
+    cast.fetchCast(widget.movieModel.id);
   }
 
   @override
   void dispose() {
-    _scrollController!.removeListener(_scrollListener);
-    _scrollController!.dispose();
-    _controller.dispose();
     super.dispose();
+  }
+
+  String getTimeString(int value) {
+    final int hour = value ~/ 60;
+    final int minutes = value % 60;
+    return '${hour.toString().padLeft(2, "")}h ${minutes.toString().padLeft(2, "")}m';
   }
 
   @override
@@ -58,7 +48,7 @@ class _MoviePageState extends State<MoviePage> {
     Size size = MediaQuery.of(context).size;
     Widget header() {
       return SliverAppBar(
-        expandedHeight: 200,
+        expandedHeight: 180,
         floating: false,
         pinned: true,
         leading: IconButton(
@@ -67,38 +57,25 @@ class _MoviePageState extends State<MoviePage> {
           },
           icon: Icon(
             Icons.arrow_back,
-            color: _isShrink ? Colors.black : whiteColor,
+            color: whiteColor,
           ),
         ),
         automaticallyImplyLeading: false,
-        backgroundColor: whiteColor,
-        elevation: 0.0,
-        flexibleSpace: FlexibleSpaceBar(
-          background: ColorFiltered(
-            colorFilter: ColorFilter.mode(
-                bannerShaderBgColor.withOpacity(0.2), BlendMode.colorBurn),
-            child: FutureBuilder(
-              future: _initializeVideoPlayerFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  // If the VideoPlayerController has finished initialization, use
-                  // the data it provides to limit the aspect ratio of the video.
-                  return AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio,
-                    // Use the VideoPlayer widget to display the video.
-                    child: VideoPlayer(_controller),
-                  );
-                } else {
-                  // If the VideoPlayerController is still initializing, show a
-                  // loading spinner.
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            ),
-          ),
-          title: _isShrink ? Container() : Container(),
+        elevation: 4.0,
+        toolbarHeight: 60.0,
+        flexibleSpace: Stack(
+          children: <Widget>[
+            Positioned.fill(
+              child: ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                    bannerShaderBgColor.withOpacity(0.3), BlendMode.colorBurn),
+                child: Image.network(
+                  'https://image.tmdb.org/t/p/w500/${widget.movieModel.backdropPath}',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            )
+          ],
         ),
       );
     }
@@ -120,7 +97,7 @@ class _MoviePageState extends State<MoviePage> {
                 Container(
                   width: 198,
                   child: Text(
-                    "Spiderman: No Way Home",
+                    "${widget.movieModel.title}",
                     maxLines: 4,
                     style: titleTextStyle.copyWith(
                       fontSize: 20,
@@ -141,7 +118,7 @@ class _MoviePageState extends State<MoviePage> {
                       width: 4,
                     ),
                     Text(
-                      "9.1/10 IMDb",
+                      "${widget.movieModel.voteAverage}/10 IMDb",
                       style: ratingTextStyle,
                     ),
                   ],
@@ -172,7 +149,7 @@ class _MoviePageState extends State<MoviePage> {
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
-            return GenreCard();
+            return GenreCard(widget.movieModel.genres![index]);
           },
         ),
       );
@@ -200,7 +177,7 @@ class _MoviePageState extends State<MoviePage> {
                   SizedBox(
                     height: 4,
                   ),
-                  Text("2h 28min",
+                  Text(getTimeString(widget.movieModel.runtime),
                       style: subTextStyle.copyWith(
                         fontWeight: semiBold,
                         color: titleBlackColor,
@@ -221,28 +198,7 @@ class _MoviePageState extends State<MoviePage> {
                   SizedBox(
                     height: 4,
                   ),
-                  Text("English",
-                      style: subTextStyle.copyWith(
-                        fontWeight: semiBold,
-                        color: titleBlackColor,
-                      )),
-                ],
-              ),
-            ),
-            Container(
-              width: 109,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "Rating",
-                    style: subTextStyle,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text("PG-13",
+                  Text("${widget.movieModel.spokenLanguages![0].englishName}",
                       style: subTextStyle.copyWith(
                         fontWeight: semiBold,
                         color: titleBlackColor,
@@ -275,7 +231,7 @@ class _MoviePageState extends State<MoviePage> {
           right: defaultMargin,
         ),
         child: Text(
-          "With Spider-Man's identity now revealed, Peter asks Doctor Strange for help. When a spell goes wrong, dangerous foes from other worlds start to appear, forcing Peter to discover what it truly means to be Spider-Man.",
+          "${widget.movieModel.overview}",
           style: subTextStyle,
         ),
       );
@@ -317,20 +273,32 @@ class _MoviePageState extends State<MoviePage> {
     }
 
     Widget cast() {
-      return Container(
-        height: 120,
-        child: ListView.builder(
-          itemCount: 4,
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            return CastCard();
-          },
-        ),
+      return BlocBuilder<CastCubit, CastState>(
+        builder: (context, state) {
+          if (state is CastLoading) {
+            return CircularProgressIndicator();
+          } else if (state is CastSuccess) {
+            return Container(
+              height: 180,
+              child: ListView.builder(
+                itemCount: 4,
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return CastCard(state.cast[index]);
+                },
+              ),
+            );
+          }
+
+          return Center(
+            child: Container(),
+          );
+        },
       );
     }
 
-    Widget videoTitle() {
+    Widget productionCompaniesTitle() {
       return Container(
         margin: EdgeInsets.only(
           left: defaultMargin,
@@ -340,122 +308,84 @@ class _MoviePageState extends State<MoviePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Videos",
+              "Production Companies",
               style: titleTextStyle.copyWith(color: subTitleColor),
             ),
-            GestureDetector(
-              onTap: () {
-                print('see more showing movie');
-              },
-              child: Container(
-                padding: EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: buttonGrayBgColor)),
-                child: Center(
-                  child: Text(
-                    "See more",
-                    style: buttonTextStyle,
-                  ),
-                ),
-              ),
-            )
           ],
         ),
       );
     }
 
-    Widget video() {
+    Widget productionCompanies() {
       return Container(
-        height: 120,
+        height: 150,
         child: ListView.builder(
-          itemCount: 4,
+          itemCount: widget.movieModel.productionCompanies!.length,
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
-            return VideoCard();
+            return CompaniesCard(widget.movieModel.productionCompanies![index]);
           },
         ),
       );
     }
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Wrap the play or pause in a call to `setState`. This ensures the
-          // correct icon is shown.
-          setState(() {
-            // If the video is playing, pause it.
-            if (_controller.value.isPlaying) {
-              _controller.pause();
-            } else {
-              // If the video is paused, play it.
-              _controller.play();
-            }
-          });
-        },
-        // Display the correct icon depending on the state of the player.
-        child: Icon(
-          _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-        ),
-      ),
-      backgroundColor: whiteColor,
-      body: NestedScrollView(
-        controller: _scrollController,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
+        backgroundColor: whiteColor,
+        body: CustomScrollView(
+          slivers: <Widget>[
             header(),
-          ];
-        },
-        body: SingleChildScrollView(
-          physics: NeverScrollableScrollPhysics(),
-          child: Container(
-            width: size.width,
-            margin: EdgeInsets.only(
-              top: 24,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                titleMovie(),
-                SizedBox(
-                  height: 16,
+            SliverFillRemaining(
+              child: SingleChildScrollView(
+                physics: NeverScrollableScrollPhysics(),
+                child: Container(
+                  width: size.width,
+                  margin: EdgeInsets.only(
+                    top: 24,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      titleMovie(),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      genreType(),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      infoMovie(),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      descripctionTitle(),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      desription(),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      castTitle(),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      cast(),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      productionCompaniesTitle(),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      productionCompanies(),
+                    ],
+                  ),
                 ),
-                genreType(),
-                SizedBox(
-                  height: 16,
-                ),
-                infoMovie(),
-                SizedBox(
-                  height: 24,
-                ),
-                descripctionTitle(),
-                SizedBox(
-                  height: 8,
-                ),
-                desription(),
-                SizedBox(
-                  height: 24,
-                ),
-                castTitle(),
-                SizedBox(
-                  height: 16,
-                ),
-                cast(),
-                SizedBox(
-                  height: 24,
-                ),
-                videoTitle(),
-                SizedBox(
-                  height: 16,
-                ),
-                video(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+              ),
+            )
+          ],
+        ));
   }
 }

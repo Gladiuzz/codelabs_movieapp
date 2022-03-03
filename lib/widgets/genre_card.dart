@@ -1,8 +1,11 @@
+import 'package:codelabs_movieapp/models/genre_model.dart';
 import 'package:codelabs_movieapp/themes/themes.dart';
 import 'package:flutter/cupertino.dart';
 
 class GenreCard extends StatelessWidget {
-  const GenreCard({Key? key}) : super(key: key);
+  final GenreModel genreModel;
+
+  const GenreCard(this.genreModel, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +19,7 @@ class GenreCard extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          "Mystery",
+          "${genreModel.name}",
           style: buttonTextStyle.copyWith(
             fontSize: 8,
             color: whiteColor,
