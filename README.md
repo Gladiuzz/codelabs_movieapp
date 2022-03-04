@@ -1,6 +1,6 @@
 # codelabs_movieapp
 
-A new Flutter project.
+A new Movie apps with flutter.
 
 ## Getting Started
 
