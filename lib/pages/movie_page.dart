@@ -336,6 +336,7 @@ class _MoviePageState extends State<MoviePage> {
           slivers: <Widget>[
             header(),
             SliverFillRemaining(
+              hasScrollBody: true,
               child: SingleChildScrollView(
                 physics: NeverScrollableScrollPhysics(),
                 child: Container(
@@ -380,6 +381,9 @@ class _MoviePageState extends State<MoviePage> {
                         height: 16,
                       ),
                       productionCompanies(),
+                      SizedBox(
+                        height: 25,
+                      ),
                     ],
                   ),
                 ),
