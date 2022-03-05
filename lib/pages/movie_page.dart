@@ -48,7 +48,7 @@ class _MoviePageState extends State<MoviePage> {
     Size size = MediaQuery.of(context).size;
     Widget header() {
       return SliverAppBar(
-        expandedHeight: 180,
+        expandedHeight: 220,
         floating: false,
         pinned: true,
         leading: IconButton(
@@ -62,7 +62,7 @@ class _MoviePageState extends State<MoviePage> {
         ),
         automaticallyImplyLeading: false,
         elevation: 4.0,
-        toolbarHeight: 60.0,
+        toolbarHeight: 45.0,
         flexibleSpace: Stack(
           children: <Widget>[
             Positioned.fill(
@@ -145,7 +145,7 @@ class _MoviePageState extends State<MoviePage> {
         ),
         height: 20,
         child: ListView.builder(
-          itemCount: 3,
+          itemCount: widget.movieModel.genres!.length,
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
@@ -333,59 +333,53 @@ class _MoviePageState extends State<MoviePage> {
     return Scaffold(
         backgroundColor: whiteColor,
         body: CustomScrollView(
+          physics: BouncingScrollPhysics(),
           slivers: <Widget>[
             header(),
-            SliverFillRemaining(
-              hasScrollBody: true,
-              child: SingleChildScrollView(
-                physics: NeverScrollableScrollPhysics(),
-                child: Container(
-                  width: size.width,
-                  margin: EdgeInsets.only(
-                    top: 24,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      titleMovie(),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      genreType(),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      infoMovie(),
-                      SizedBox(
-                        height: 24,
-                      ),
-                      descripctionTitle(),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      desription(),
-                      SizedBox(
-                        height: 24,
-                      ),
-                      castTitle(),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      cast(),
-                      SizedBox(
-                        height: 24,
-                      ),
-                      productionCompaniesTitle(),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      productionCompanies(),
-                      SizedBox(
-                        height: 25,
-                      ),
-                    ],
-                  ),
+            SliverToBoxAdapter(
+              child: Container(
+                width: size.width,
+                margin: EdgeInsets.only(
+                  top: 24,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    titleMovie(),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    genreType(),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    infoMovie(),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    descripctionTitle(),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    desription(),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    castTitle(),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    cast(),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    productionCompaniesTitle(),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    productionCompanies(),
+                  ],
                 ),
               ),
             )

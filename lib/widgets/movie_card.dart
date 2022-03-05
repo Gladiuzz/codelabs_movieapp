@@ -28,7 +28,6 @@ class MovieCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: size.width,
         margin: EdgeInsets.only(left: defaultMargin, bottom: 16),
         child: Row(
           children: <Widget>[
@@ -46,70 +45,74 @@ class MovieCard extends StatelessWidget {
             SizedBox(
               width: 16,
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "${movie.title}",
-                  maxLines: 15,
-                  style: titleTextStyle.copyWith(
-                    fontSize: 14,
+            Container(
+              width: size.width * .6,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "${movie.title}",
+                    maxLines: 3,
+                    style: titleTextStyle.copyWith(
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.star,
-                      color: starColor,
-                      size: 14,
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      "${movie.voteAverage}/10 IMDb",
-                      style: ratingTextStyle,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Container(
-                  height: 20,
-                  child: ListView.builder(
-                    itemCount: movie.genres?.length,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return GenreCard(movie.genres![index]);
-                    },
+                  SizedBox(
+                    height: 8,
                   ),
-                ),
-                SizedBox(
-                  height: 10.64,
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.access_time_outlined,
-                      color: Colors.black,
-                      size: 14,
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      getTimeString(movie.runtime),
-                      style: ratingTextStyle.copyWith(),
-                    ),
-                  ],
-                ),
-              ],
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.star,
+                        color: starColor,
+                        size: 14,
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        "${movie.voteAverage}/10 IMDb",
+                        style: ratingTextStyle,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Wrap(
+                    direction: Axis.horizontal,
+                    runSpacing: 10.0,
+                    children: movie.genres!
+                        .map((e) => Wrap(
+                              direction: Axis.vertical,
+                              children: [
+                                GenreCard(e),
+                              ],
+                            ))
+                        .toList(),
+                  ),
+                  SizedBox(
+                    height: 10.64,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time_outlined,
+                        color: Colors.black,
+                        size: 14,
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        getTimeString(movie.runtime),
+                        style: ratingTextStyle.copyWith(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             )
           ],
         ),

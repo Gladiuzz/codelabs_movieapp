@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     PreferredSizeWidget header() {
       return AppBar(
         title: Row(
@@ -120,7 +122,67 @@ class _HomePageState extends State<HomePage> {
         child: BlocBuilder<MoviePopularCubit, MoviePopularState>(
           builder: (context, state) {
             if (state is MoviePopularLoading) {
-              return CircularProgressIndicator();
+              return ListView.builder(
+                itemCount: 4,
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: EdgeInsets.only(left: 20, right: 5),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 139,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Shimmer.fromColors(
+                                baseColor: Color.fromARGB(255, 238, 238, 238),
+                                highlightColor:
+                                    Color.fromARGB(255, 214, 214, 214),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(6.0),
+                                  child: Container(
+                                    width: 143,
+                                    height: 212,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Shimmer.fromColors(
+                                baseColor: Color.fromARGB(255, 238, 238, 238),
+                                highlightColor:
+                                    Color.fromARGB(255, 214, 214, 214),
+                                child: Container(
+                                  width: 143,
+                                  height: 10,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Shimmer.fromColors(
+                                baseColor: Color.fromARGB(255, 238, 238, 238),
+                                highlightColor:
+                                    Color.fromARGB(255, 214, 214, 214),
+                                child: Container(
+                                  width: 143,
+                                  height: 10,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
             } else if (state is MoviePopularSuccess) {
               return ListView.builder(
                 itemCount: 4,
@@ -189,10 +251,106 @@ class _HomePageState extends State<HomePage> {
         child: BlocBuilder<MovienewplayingCubit, MovienewplayingState>(
           builder: (context, state) {
             if (state is MovienewplayingLoading) {
-              return CircularProgressIndicator();
+              return ListView.builder(
+                itemCount: 4,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Container(
+                    child: Container(
+                      width: size.width,
+                      margin: EdgeInsets.only(left: defaultMargin, bottom: 16),
+                      child: Row(
+                        children: <Widget>[
+                          Shimmer.fromColors(
+                            baseColor: Color.fromARGB(255, 238, 238, 238),
+                            highlightColor: Color.fromARGB(255, 214, 214, 214),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(6.0),
+                              child: Container(
+                                width: 85,
+                                height: 120,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Shimmer.fromColors(
+                                baseColor: Color.fromARGB(255, 238, 238, 238),
+                                highlightColor:
+                                    Color.fromARGB(255, 214, 214, 214),
+                                child: Container(
+                                  width: size.width * .6,
+                                  height: 10,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  Shimmer.fromColors(
+                                    baseColor:
+                                        Color.fromARGB(255, 238, 238, 238),
+                                    highlightColor:
+                                        Color.fromARGB(255, 214, 214, 214),
+                                    child: Container(
+                                      width: size.width * .4,
+                                      height: 10,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Shimmer.fromColors(
+                                baseColor: Color.fromARGB(255, 238, 238, 238),
+                                highlightColor:
+                                    Color.fromARGB(255, 214, 214, 214),
+                                child: Container(
+                                  width: size.width * .6,
+                                  height: 20,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10.64,
+                              ),
+                              Row(
+                                children: [
+                                  Shimmer.fromColors(
+                                    baseColor:
+                                        Color.fromARGB(255, 238, 238, 238),
+                                    highlightColor:
+                                        Color.fromARGB(255, 214, 214, 214),
+                                    child: Container(
+                                      width: size.width * .2,
+                                      height: 10,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
             } else if (state is MovienewplayingSuccess) {
               return ListView.builder(
-                itemCount: 10,
+                itemCount: 8,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
